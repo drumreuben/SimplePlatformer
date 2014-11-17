@@ -1,4 +1,4 @@
-import org.w3c.dom.css.RGBColor;
+
 
 import java.awt.*;
 import java.util.*;
@@ -23,7 +23,8 @@ class Player {
     int xViewSize = 50;
     int yViewSize = 50;
     int currentLevel = 0;
-    int shotTimer = 0;
+    int shootTimer = 0;
+    int shootMax = 25;
     double score = 0;
     boolean alive = true;
     boolean won = false;
@@ -47,8 +48,11 @@ class Player {
     //checks collision to the left, and also fixes clipping.
     boolean checkLeft(ArrayList<Wall> walls) {
         for (Wall wall : walls) {
-            if (xPos - size - xSpeed <= wall.x2 && xPos - size - xSpeed > wall.x1) {
-                if ((yPos + size > wall.y1 && yPos + size < wall.y2) || (yPos - size < wall.y2 && yPos - size > wall.y1) || (yPos > wall.y1 && yPos < wall.y2)) {
+            if (xPos - size - xSpeed <= wall.x2 && xPos - size -
+                    xSpeed > wall.x1) {
+                if ((yPos + size > wall.y1 && yPos + size < wall.y2)
+                        || (yPos - size < wall.y2 && yPos - size > wall.y1) || (yPos > wall.y1
+                        && yPos < wall.y2)) {
                     xPos = wall.x2 + size;
                     return true;
                 }
@@ -60,8 +64,11 @@ class Player {
     //checks collision to the right, and also fixes clipping.
     boolean checkRight(ArrayList<Wall> walls) {
         for (Wall wall : walls) {
-            if (xPos + size + xSpeed >= wall.x1 && xPos + size +xSpeed < wall.x2) {
-                if ((yPos + size > wall.y1 && yPos + size < wall.y2) || (yPos - size < wall.y2 && yPos - size > wall.y1) || (yPos > wall.y1 && yPos < wall.y2)) {
+            if (xPos + size + xSpeed >= wall.x1 && xPos + size +xSpeed
+                    < wall.x2) {
+                if ((yPos + size > wall.y1 && yPos + size < wall.y2)
+                        || (yPos - size < wall.y2 && yPos - size > wall.y1) || (yPos > wall.y1
+                        && yPos < wall.y2)) {
                     xPos = wall.x1 - size;
                     return true;
                 }
@@ -73,8 +80,10 @@ class Player {
     //checks collision down and also fixes clipping.
     boolean checkDown(ArrayList<Wall> walls) {
         for (Wall wall : walls) {
-            if (yPos - size + ySpeed <= wall.y2 && yPos - size + ySpeed > wall.y1) {
-                if ((xPos + size > wall.x1 && xPos + size < wall.x2) || (xPos - size < wall.x2 && xPos - size > wall.x1)) {
+            if (yPos - size + ySpeed <= wall.y2 && yPos - size +
+                    ySpeed > wall.y1) {
+                if ((xPos + size > wall.x1 && xPos + size < wall.x2)
+                        || (xPos - size < wall.x2 && xPos - size > wall.x1)) {
                     yPos = wall.y2 + size;
                     return true;
                 }
@@ -87,8 +96,10 @@ class Player {
     //checks collision up and also fixes clipping.
     boolean checkUp(ArrayList<Wall> walls) {
         for(Wall wall : walls){
-            if(yPos + size + ySpeed >= wall.y1 && yPos + size + ySpeed < wall.y2){
-                if((xPos + size > wall.x1 && xPos + size < wall.x2) || (xPos - size < wall.x2 && xPos - size > wall.x1)){
+            if(yPos + size + ySpeed >= wall.y1 && yPos + size + ySpeed
+                    < wall.y2){
+                if((xPos + size > wall.x1 && xPos + size < wall.x2) ||
+                        (xPos - size < wall.x2 && xPos - size > wall.x1)){
                     yPos = wall.y1 - size;
                     return true;
                 }
@@ -99,13 +110,29 @@ class Player {
     }
 
     //checks gameOver
-    void gameOver(int levelMin, double currentXmin, double currentXmax, double currentYmin, double currentYmax){
+    void gameOver(int levelMin, double currentXmin, double
+            currentXmax, double currentYmin, double currentYmax){
         if(yPos < levelMin - 30){
             StdDraw.setPenColor(Color.BLACK);
-            StdDraw.text((currentXmin + currentXmax) / 2, (currentYmin + currentYmax) / 2, "You Died!");
+            StdDraw.text((currentXmin + currentXmax) / 2, (currentYmin
+                    + currentYmax) / 2, "You Died!");
             alive = false;
             ySpeed = 0;
             gravity = 0;
+        }
+    }
+
+    boolean canfire(){
+        if(shootTimer == 0){
+            shootTimer = shootMax;
+            return true;
+        }
+        return false;
+    }
+
+    void incrementShotTimer(){
+        if(shootTimer != 0){
+            shootTimer--;
         }
     }
 
@@ -150,21 +177,12 @@ class Wall {
 class Level {
 
     int num;
-    Goal goal;
-    int xMin;
-    int xMax;
-    int yMin;
-    int yMax;
     ArrayList<Wall> walls;
 
-    public Level(ArrayList<Wall> list, int arg, Goal goalnum, int levelXmin, int levelXmax, int levelyMin, int levelYmax) {
+    public Level(ArrayList<Wall> list, int arg) {
         walls = list;
         num = arg;
-        goal = goalnum;
-        xMin = levelXmin;
-        xMax = levelXmax;
-        yMin = levelyMin;
-        yMax = levelYmax;
+
     }
 
 }
@@ -186,11 +204,17 @@ class Goal {
     }
 
     //checks win and displays win message
-    void checkCollision(Player player, double currentXmin, double currentXmax, double currentYmin, double currentYmax) {
-        if ((player.xPos + player.size > x1 && player.xPos + player.size < x2) || player.xPos - player.size < x2 && player.xPos - player.size > x1) {
-            if ((player.yPos + player.size > y1 && player.yPos + player.size < y2) || (player.yPos - player.size < y2 && player.yPos - player.size > y1)) {
+    void checkCollision(Player player, double currentXmin, double
+            currentXmax, double currentYmin, double currentYmax) {
+        if ((player.xPos + player.size > x1 && player.xPos +
+                player.size < x2) || player.xPos - player.size < x2 && player.xPos -
+                player.size > x1) {
+            if ((player.yPos + player.size > y1 && player.yPos +
+                    player.size < y2) || (player.yPos - player.size < y2 && player.yPos -
+                    player.size > y1)) {
                 StdDraw.setPenColor(Color.BLACK);
-                StdDraw.text((currentXmin + currentXmax) / 2, (currentYmin + currentYmax) / 2, "You won!");
+                StdDraw.text((currentXmin + currentXmax) / 2,
+                        (currentYmin + currentYmax) / 2, "You won!");
                 player.won = true;
             }
         }
@@ -207,30 +231,46 @@ class Goal {
     }
 }
 
-    class Shot {
-        double xPos;
-        double yPos;
-        double xSpeed;
-        double ySpeed;
-        int size = 1;
-        double speed = 3;
-        Color shotColor = (Color.YELLOW);
+class shot {
 
-        void fire(Player player) {
-            xPos = player.xPos;
-            yPos = player.yPos;
-            xSpeed = StdDraw.mouseX() / speed;
-            ySpeed = StdDraw.mouseY() / speed;
+    double xPos;
+    double yPos;
+    double targetXpos;
+    double targetYpos;
+    double speed = 1.3;
+    double xSpeed;
+    double ySpeed;
+    double size = 3;
+    Color color = Color.YELLOW;
+
+    public shot(Player player) {
+
+        //gets data for player x and y + target x and y
+        xPos = player.xPos;
+        yPos = player.yPos;
+        targetXpos = StdDraw.mouseX();
+        targetYpos = StdDraw.mouseY();
+
+        //calculates x and y speeds
+        double longX = StdDraw.mouseX() - xPos;
+        double longY = StdDraw.mouseY() - yPos;
+        double longZ = Math.sqrt(Math.pow(longX, 2) + Math.pow(longY, 2));
+        double innerAngle = Math.asin(longX / longZ);
+        ySpeed = Math.cos(innerAngle) * speed;
+        xSpeed = Math.sin(innerAngle) * speed;
+        if (StdDraw.mouseY() < yPos) {
+            ySpeed *= -1;
         }
 
-        void draw() {
-            StdDraw.setPenColor(shotColor);
-            StdDraw.filledCircle(xPos, yPos, size);
-        }
-
-        void move() {
-            xPos += xSpeed;
-            yPos += ySpeed;
-        }
     }
 
+    void move() {
+        xPos += xSpeed;
+        yPos += ySpeed;
+    }
+
+    void draw() {
+        StdDraw.setPenColor(color);
+        StdDraw.filledCircle(xPos, yPos, size);
+    }
+}
