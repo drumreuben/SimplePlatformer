@@ -273,4 +273,44 @@ class shot {
         StdDraw.setPenColor(color);
         StdDraw.filledCircle(xPos, yPos, size);
     }
+
+    //checks collision to the left, and also fixes clipping.
+    boolean checkCollide(ArrayList<Wall> walls) {
+        for (Wall wall : walls) {
+            //checks to the left
+            if (xPos - size - xSpeed <= wall.x2 && xPos - size -
+                    xSpeed > wall.x1) {
+                if ((yPos + size > wall.y1 && yPos + size < wall.y2)
+                        || (yPos - size < wall.y2 && yPos - size > wall.y1) || (yPos > wall.y1
+                        && yPos < wall.y2)) {
+                    return true;
+                }
+            }
+            //checks to the right
+            if (xPos + size + xSpeed >= wall.x1 && xPos + size +xSpeed
+                    < wall.x2) {
+                if ((yPos + size > wall.y1 && yPos + size < wall.y2)
+                        || (yPos - size < wall.y2 && yPos - size > wall.y1) || (yPos > wall.y1
+                        && yPos < wall.y2)) {
+                    return true;
+                }
+            }
+            //checks down
+            if (yPos - size + ySpeed <= wall.y2 && yPos - size +
+                    ySpeed > wall.y1) {
+                if ((xPos + size > wall.x1 && xPos + size < wall.x2)
+                        || (xPos - size < wall.x2 && xPos - size > wall.x1)) {
+                    return true;
+                }
+            }
+            if(yPos + size + ySpeed >= wall.y1 && yPos + size + ySpeed
+                    < wall.y2){
+                if((xPos + size > wall.x1 && xPos + size < wall.x2) ||
+                        (xPos - size < wall.x2 && xPos - size > wall.x1)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

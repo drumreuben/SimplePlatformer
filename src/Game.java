@@ -167,9 +167,17 @@ public class Game {
                 //draws player 1
                 player1.draw();
 
+                ArrayList<shot> projectilesCopy = new ArrayList<shot>();
                 for(shot shot : projectiles){
-                    shot.move();
+                    if (!shot.checkCollide(levels.get(player1.currentLevel))) {
+                        projectilesCopy.add(shot);
+                    }
+                }
+                projectiles = projectilesCopy;
+
+                for(shot shot : projectiles) {
                     shot.draw();
+                    shot.move();
                 }
 
                 player1.incrementShotTimer();
