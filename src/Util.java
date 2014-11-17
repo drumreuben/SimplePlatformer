@@ -20,8 +20,8 @@ class Player {
     double yPos;
     int xViewSize = 50;
     int yViewSize = 50;
+    int currentLevel = 0;
     double score = 0;
-    boolean hitCeiling = false;
     boolean alive = true;
     boolean won = false;
     //current gravity acting on player (negative is down, positive is up)
@@ -101,7 +101,18 @@ class Player {
             StdDraw.setPenColor(Color.BLACK);
             StdDraw.text((currentXmin + currentXmax) / 2, (currentYmin + currentYmax) / 2, "You Died!");
             alive = false;
+            ySpeed = 0;
+            gravity = 0;
         }
+    }
+
+    void setDefault(){
+        xPos = 45;
+        yPos = 10;
+        alive = true;
+        won = false;
+        ySpeed = 0;
+        gravity = -.07;
     }
 }
 
@@ -138,7 +149,7 @@ class Level {
     int num;
     ArrayList<Wall> walls;
 
-    public Level(ArrayList<Wall> list, int arg){
+    public Level(ArrayList<Wall> list, int arg) {
         walls = list;
         num = arg;
 

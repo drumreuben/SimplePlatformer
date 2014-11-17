@@ -9,37 +9,54 @@ public class Game {
 
     public static void main(String[] args) {
 
+         //all the walls in the level
+        ArrayList<Wall> level0 = new ArrayList<Wall>();
+        level0.add(new Wall(0, 5, 5, 95));
+        level0.add(new Wall(295, 5, 300, 100));
+        level0.add(new Wall(0, 95, 300, 100));
+        level0.add(new Wall(0, 0, 80, 5));
+        level0.add(new Wall(110, 10, 130, 15));
+        level0.add(new Wall(160, 20, 180, 25));
+        level0.add(new Wall(210, 30, 230, 35));
+        level0.add(new Wall(260, 0, 300, 5));
+
+        ArrayList<Wall> level1 = new ArrayList<Wall>();
+        level1.add(new Wall(0, 5, 5, 95));
+        level1.add(new Wall(295, 5, 300, 100));
+        level1.add(new Wall(0, 95, 300, 100));
+        level1.add(new Wall(0, 0, 80, 5));
+        level1.add(new Wall(110, 10, 130, 15));
+        level1.add(new Wall(175, 20, 195, 25));
+        level1.add(new Wall(260, 0, 300, 5));
+
+        //new player with certain properties
+        Player player1 = new Player(Color.CYAN, 5, 45, 10);
+
+        //new goal
+        Goal goal1 = new Goal(280, 5, 295, 95);
+
+        //level size (used for camera tracking)
+        int levelXmin = 0;
+        int levelXmax = 300;
+        int levelYmin = 0;
+        int levelYmax = 200;
+        double currentXmin;
+        double currentXmax;
+        double currentYmin;
+        double currentYmax;
+
+        ArrayList<ArrayList<Wall>> levels = new ArrayList<ArrayList<Wall>>();
+        levels.add(level0);
+        levels.add(level1);
+
         while (true) {
-            //new player with certain properties
-            Player player1 = new Player(Color.CYAN, 5, 45, 10);
 
-            //new goal
-            Goal goal1 = new Goal(280, 5, 295, 95);
-
-            //all the walls in the level
-            ArrayList<Wall> walls = new ArrayList<Wall>();
-            walls.add(new Wall(0, 5, 5, 95));
-            walls.add(new Wall(295, 5, 300, 100));
-            walls.add(new Wall(0, 95, 300, 100));
-            walls.add(new Wall(0, 0, 80, 5));
-            walls.add(new Wall(110, 10, 130, 15));
-            walls.add(new Wall(160, 20, 180, 25));
-            walls.add(new Wall(210, 30, 230, 35));
-            walls.add(new Wall(260, 0, 300, 5));
-
-            //level size (used for camera tracking)
-            int levelXmin = 0;
-            int levelXmax = 300;
-            int levelYmin = 0;
-            int levelYmax = 200;
-            double currentXmin;
-            double currentXmax;
-            double currentYmin;
-            double currentYmax;
+            player1.setDefault();
 
             while (true) {
 
                 StdDraw.clear();
+
                 //determines x camera tracking
                 if (player1.xPos - player1.xViewSize < levelXmin) {
                     currentXmin = levelXmin;
@@ -70,14 +87,14 @@ public class Game {
                 player1.yPos += player1.ySpeed;
 
                 //determines whether or not gravity should be added to speed (player is not on the ground)
-                if (!player1.checkDown(walls)) {
+                if (!player1.checkDown(levels.get(player1.currentLevel))) {
                     player1.ySpeed += player1.gravity;
                 } else {
                     player1.ySpeed = 0;
                 }
 
                 //checks if player has hit their head on a ceiling
-                if (player1.checkUp(walls)) {
+                if (player1.checkUp(levels.get(player1.currentLevel))) {
                     player1.ySpeed = 0;
                 }
 
@@ -91,21 +108,21 @@ public class Game {
 
                      //jumps if player is on the ground and hitting space.
                     if (StdDraw.isKeyPressed(32)) {
-                        if (player1.checkDown(walls)) {
+                        if (player1.checkDown(levels.get(player1.currentLevel))) {
                             player1.ySpeed = player1.jumpHeight;
                         }
                     }
 
                     //moves left if the player is not colliding and is holding the left arrow key
                     if (StdDraw.isKeyPressed(37)) {
-                        if (!player1.checkLeft(walls)) {
+                        if (!player1.checkLeft(levels.get(player1.currentLevel))) {
                             player1.xPos -= player1.xSpeed;
                         }
                     }
 
                     //moves right if the the player is not colliding and is holding the right arrow key.
                     if (StdDraw.isKeyPressed(39)) {
-                        if (!player1.checkRight(walls)) {
+                        if (!player1.checkRight(levels.get(player1.currentLevel))) {
                             player1.xPos += player1.xSpeed;
                         }
                     }
@@ -116,13 +133,19 @@ public class Game {
                     break;
                 }
 
+                //moves to next level
+                if(StdDraw.isKeyPressed(84) && player1.won){
+                    player1.currentLevel++;
+                    break;
+                }
+
                 //ends game
                 if(StdDraw.isKeyPressed(27)){
                     System.exit(0);
                 }
 
                 //draws all the walls in the level
-                for (Wall wall : walls) {
+                for (Wall wall : levels.get(player1.currentLevel)) {
                     wall.draw();
                 }
 
