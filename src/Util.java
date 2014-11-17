@@ -1,3 +1,5 @@
+import org.w3c.dom.css.RGBColor;
+
 import java.awt.*;
 import java.util.*;
 
@@ -21,6 +23,7 @@ class Player {
     int xViewSize = 50;
     int yViewSize = 50;
     int currentLevel = 0;
+    int shotTimer = 0;
     double score = 0;
     boolean alive = true;
     boolean won = false;
@@ -147,12 +150,21 @@ class Wall {
 class Level {
 
     int num;
+    Goal goal;
+    int xMin;
+    int xMax;
+    int yMin;
+    int yMax;
     ArrayList<Wall> walls;
 
-    public Level(ArrayList<Wall> list, int arg) {
+    public Level(ArrayList<Wall> list, int arg, Goal goalnum, int levelXmin, int levelXmax, int levelyMin, int levelYmax) {
         walls = list;
         num = arg;
-
+        goal = goalnum;
+        xMin = levelXmin;
+        xMax = levelXmax;
+        yMin = levelyMin;
+        yMax = levelYmax;
     }
 
 }
@@ -174,9 +186,9 @@ class Goal {
     }
 
     //checks win and displays win message
-    void checkCollision(Player player, double currentXmin, double currentXmax, double currentYmin, double currentYmax){
-        if((player.xPos + player.size > x1 && player.xPos + player.size < x2) || player.xPos - player.size < x2 && player.xPos - player.size > x1){
-            if((player.yPos + player.size > y1 && player.yPos + player.size < y2) || (player.yPos - player.size < y2 && player.yPos - player.size > y1)){
+    void checkCollision(Player player, double currentXmin, double currentXmax, double currentYmin, double currentYmax) {
+        if ((player.xPos + player.size > x1 && player.xPos + player.size < x2) || player.xPos - player.size < x2 && player.xPos - player.size > x1) {
+            if ((player.yPos + player.size > y1 && player.yPos + player.size < y2) || (player.yPos - player.size < y2 && player.yPos - player.size > y1)) {
                 StdDraw.setPenColor(Color.BLACK);
                 StdDraw.text((currentXmin + currentXmax) / 2, (currentYmin + currentYmax) / 2, "You won!");
                 player.won = true;
@@ -185,14 +197,40 @@ class Goal {
     }
 
     //draws goal
-    void draw(){
+    void draw() {
         StdDraw.setPenColor(173, 255, 179);
-        double xCenter = (x2+x1)/2;
-        double yCenter = (y2+y1)/2;
-        double halfWidth = x2-xCenter;
-        double halfHeight = y2-yCenter;
+        double xCenter = (x2 + x1) / 2;
+        double yCenter = (y2 + y1) / 2;
+        double halfWidth = x2 - xCenter;
+        double halfHeight = y2 - yCenter;
         StdDraw.filledRectangle(xCenter, yCenter, halfWidth, halfHeight);
     }
-
 }
+
+    class Shot {
+        double xPos;
+        double yPos;
+        double xSpeed;
+        double ySpeed;
+        int size = 1;
+        double speed = 3;
+        Color shotColor = (Color.YELLOW);
+
+        void fire(Player player) {
+            xPos = player.xPos;
+            yPos = player.yPos;
+            xSpeed = StdDraw.mouseX() / speed;
+            ySpeed = StdDraw.mouseY() / speed;
+        }
+
+        void draw() {
+            StdDraw.setPenColor(shotColor);
+            StdDraw.filledCircle(xPos, yPos, size);
+        }
+
+        void move() {
+            xPos += xSpeed;
+            yPos += ySpeed;
+        }
+    }
 
