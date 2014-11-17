@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="SimplePlatformer:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/SimplePlatformer_jar</output-path>
+    <root id="archive" name="SimplePlatformer.jar">
+      <element id="module-output" name="SimplePlatformer" />
+    </root>
+  </artifact>
+</component>
