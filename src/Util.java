@@ -1,7 +1,7 @@
 
-
 import java.awt.*;
 import java.util.*;
+import java.io.*;
 
 /**
  * Created by Reuben on 11/15/2014.
@@ -32,11 +32,9 @@ class Player {
     double gravity = -.07;
 
     //constructor. Takes color, size, starting position x and y
-    public Player(Color playerColor, double playerSize, double x, double y) {
+    public Player(Color playerColor, double playerSize) {
         color = playerColor;
         size = playerSize;
-        xPos = x;
-        yPos = y;
     }
 
     //draws the player
@@ -83,7 +81,7 @@ class Player {
             if (yPos - size + ySpeed <= wall.y2 && yPos - size +
                     ySpeed > wall.y1) {
                 if ((xPos + size > wall.x1 && xPos + size < wall.x2)
-                        || (xPos - size < wall.x2 && xPos - size > wall.x1)) {
+                        || (xPos - size < wall.x2 && xPos - size > wall.x1) || (xPos > wall.x1 && xPos < wall.x2)) {
                     yPos = wall.y2 + size;
                     return true;
                 }
@@ -99,7 +97,7 @@ class Player {
             if(yPos + size + ySpeed >= wall.y1 && yPos + size + ySpeed
                     < wall.y2){
                 if((xPos + size > wall.x1 && xPos + size < wall.x2) ||
-                        (xPos - size < wall.x2 && xPos - size > wall.x1)){
+                        (xPos - size < wall.x2 && xPos - size > wall.x1) || (xPos > wall.x1 && xPos < wall.x2)){
                     yPos = wall.y1 - size;
                     return true;
                 }
@@ -137,8 +135,6 @@ class Player {
     }
 
     void setDefault(){
-        xPos = 45;
-        yPos = 10;
         alive = true;
         won = false;
         ySpeed = 0;
@@ -176,14 +172,14 @@ class Wall {
 
 class Level {
 
-    int num;
-    ArrayList<Wall> walls;
-
-    public Level(ArrayList<Wall> list, int arg) {
-        walls = list;
-        num = arg;
-
-    }
+    ArrayList<Wall> walls = new ArrayList<Wall>();
+    int startX;
+    int startY;
+    int levelXmin;
+    int levelXmax;
+    int levelYmin;
+    int levelYmax;
+    Goal goal;
 
 }
 
@@ -272,45 +268,5 @@ class shot {
     void draw() {
         StdDraw.setPenColor(color);
         StdDraw.filledCircle(xPos, yPos, size);
-    }
-
-    //checks collision to the left, and also fixes clipping.
-    boolean checkCollide(ArrayList<Wall> walls) {
-        for (Wall wall : walls) {
-            //checks to the left
-            if (xPos - size - xSpeed <= wall.x2 && xPos - size -
-                    xSpeed > wall.x1) {
-                if ((yPos + size > wall.y1 && yPos + size < wall.y2)
-                        || (yPos - size < wall.y2 && yPos - size > wall.y1) || (yPos > wall.y1
-                        && yPos < wall.y2)) {
-                    return true;
-                }
-            }
-            //checks to the right
-            if (xPos + size + xSpeed >= wall.x1 && xPos + size +xSpeed
-                    < wall.x2) {
-                if ((yPos + size > wall.y1 && yPos + size < wall.y2)
-                        || (yPos - size < wall.y2 && yPos - size > wall.y1) || (yPos > wall.y1
-                        && yPos < wall.y2)) {
-                    return true;
-                }
-            }
-            //checks down
-            if (yPos - size + ySpeed <= wall.y2 && yPos - size +
-                    ySpeed > wall.y1) {
-                if ((xPos + size > wall.x1 && xPos + size < wall.x2)
-                        || (xPos - size < wall.x2 && xPos - size > wall.x1)) {
-                    return true;
-                }
-            }
-            if(yPos + size + ySpeed >= wall.y1 && yPos + size + ySpeed
-                    < wall.y2){
-                if((xPos + size > wall.x1 && xPos + size < wall.x2) ||
-                        (xPos - size < wall.x2 && xPos - size > wall.x1)){
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }
